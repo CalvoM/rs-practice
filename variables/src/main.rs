@@ -18,4 +18,9 @@ fn main() {
     println!("Wanna see the Yen sign, oh I mean {}",yen);
     let coords: (f32, f32, f32) = (0.0,0.0,0.0);
     println!("The coordinates for origin is {} {} {}",coords.0,coords.1,coords.2);
+    choose_me()
+}
+
+fn choose_me(){
+    println!("I was just saying you choose me \r\nThanks for choosing me.")
 }
