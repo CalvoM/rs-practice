@@ -1,21 +1,21 @@
 fn main() {
     let s1 = String::from("hello");
-    let (s2,len) = get_length_and_return(s1);
-    println!("{} is of length {}",s2,len);
+    let len = get_length(&s1);
+    println!("{} is of length {}",s1,len);
+    modify_str(&s1);
     let x = 5;
     makes_copy(x);
     println!("{}",x);
-}
-
-fn takes_ownership(some_string: String){
-    println!("{}",some_string);
 }
 
 fn makes_copy(some_integer: i32){
     println!("{}", some_integer);
 }
 
-fn get_length_and_return(s: String) ->(String, usize){
-    let s_len = s.len();
-    (s,s_len)
+fn get_length(s: &String) -> usize{
+    s.len()
+}
+
+fn modify_str(s: &String){
+    s.push_str("Test")
 }
