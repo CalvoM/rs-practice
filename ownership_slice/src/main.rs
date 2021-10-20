@@ -1,17 +1,15 @@
 fn main() {
     let name: String = String::from("Noel Mwadime");
-    let end = first_word(&name);
-    let first = &name[0..end];
-    let second = &name[end+1..name.len()];
-    println!("{} {} == {}",first,second,name);
+    let first = first_word(&name);
+    name.clear();
 }
 
-fn first_word(s: &String) -> usize{
+fn first_word(s: &String) -> &str{
     let bytes = s.as_bytes();
     for(i,&item) in bytes.iter().enumerate(){
         if item == b' '{
-            return i;
+            return &s[0..i];
         }
     }
-    s.len()
+    &s[..]
 }
