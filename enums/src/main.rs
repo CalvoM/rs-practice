@@ -1,8 +1,20 @@
+enum Coin{
+    _Penny,
+    _Nickel,
+    _Dime,
+    Quarter,
+}
+
+fn get_cents(coin: Coin) -> u32{
+    match coin{
+        Coin::_Penny => 1,
+        Coin::_Nickel => 5,
+        Coin::_Dime => 10,
+        Coin::Quarter => 25,
+    }
+}
+
 fn main() {
-    let some_number = Some(5);
-    let some_string = Some("a string");
-    let absent_number: Option<i32> = None;
-    let def_number: i8 = 5;
-    let sum = some_number + def_number;
-    println!("{}", sum);
+    let my_coin = Coin::Quarter;
+    println!("Number of cents for coin = {}", get_cents(my_coin));
 }
