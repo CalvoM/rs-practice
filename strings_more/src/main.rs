@@ -14,4 +14,11 @@ fn main() {
     // println!("{}", game);
     let g = format!("{}-{}-{}",tic,tac,toe);
     println!("{}",g);
+    let hello = "Здравствуйте";
+    for c in hello.chars() {
+        println!("{}",c)
+    }
+    for b in hello.bytes() {
+        print!("{} ",b)
+    }
 }
