@@ -19,4 +19,11 @@ fn main() {
     scores.entry(&blue).or_insert(&60);
     println!("{:?}", scores);
     let _blue_score = scores.get(&String::from("Blue"));
+    let text = "hello from the other side";
+    let mut word_map = HashMap::new();
+    for word in text.split_whitespace(){
+        let count = word_map.entry(word).or_insert(0);
+        *count += 1
+    }
+    println!("{:?}", word_map)
 }
