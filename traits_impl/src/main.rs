@@ -38,6 +38,15 @@ pub struct LectureNotes {
 
 impl Summary for LectureNotes {
 }
+
+pub fn notify(item: &impl Summary) {
+    println!("Breaking information: {}", item.summarize());
+}
+pub fn verbose_notify<T>(item: &T)
+    where T: Summary,
+{
+    print!("Verbose description of {}", item.summarize());
+}
 fn main() {
     let tweet = Tweet {
         username: String::from("d1r3ct0r"),
@@ -45,11 +54,12 @@ fn main() {
         reply: false,
         retweet: false,
     };
-    println!("1 new tweet: {}", tweet.summarize());
+    notify(&tweet);
     let mechanics = LectureNotes {
         title: String::from("Forces"),
         pages: String::from("12-13 pages"),
         references: String::from("Static mechanics"),
     };
-    println!("Upcoming lecture: {}", mechanics.summarize());
+    notify(&mechanics);
+    verbose_notify(&mechanics);
 }
