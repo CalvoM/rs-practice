@@ -47,6 +47,16 @@ pub fn verbose_notify<T>(item: &T)
 {
     print!("Verbose description of {}", item.summarize());
 }
+
+pub fn get_summarizable() -> impl Summary {
+    Tweet{
+        username: String::from("elonmusk"),
+        content: String::from("Now the technoking"),
+        reply: false,
+        retweet: false,
+    }
+}
+
 fn main() {
     let tweet = Tweet {
         username: String::from("d1r3ct0r"),
@@ -60,6 +70,8 @@ fn main() {
         pages: String::from("12-13 pages"),
         references: String::from("Static mechanics"),
     };
+    let new_tweet = get_summarizable();
     notify(&mechanics);
     verbose_notify(&mechanics);
+    verbose_notify(&new_tweet);
 }
