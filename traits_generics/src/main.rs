@@ -10,6 +10,30 @@ fn get_largest<T>(list: &[T]) -> T
     largest
 }
 
+fn cloning_get_largest<T>(list: &[T]) -> T
+    where T: PartialOrd + Clone + Copy,
+{
+    let mut largest = list.clone()[0];
+    for &item in list.clone() {
+        if item > largest {
+            largest = item;
+        }
+    }
+    largest
+}
+
+fn borrowing_get_largest<T>(list: [T]) -> &T 
+    where T: PartialOrd + Copy,
+{
+    let mut largest = list[0];
+    for &item in list {
+        if item > largest {
+            largest = item;
+        }
+    }
+    &largest
+}
+
 struct Point<T> {
     x: T,
     y: T,
@@ -46,6 +70,9 @@ fn main() {
     println!("The largest number is {}", largest);
     let char_list = vec!['y', 'm', 'a', 'q'];
     let result = get_largest(&char_list);
+    println!("The largest of char is {}", result);
+    let char_list = vec!['y', 'm', 'a', 'q'];
+    let result = cloning_get_largest(&char_list);
     println!("The largest of char is {}", result);
     let float_point = Point{x: 3.0, y: 4.0};
     println!("Distance for the origin is for floating point is {}", float_point.distance_from_origin());
