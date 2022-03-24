@@ -1,20 +1,51 @@
 use std::thread;
-use std::time::Duration;
+use std::time::{Duration,Instant};
+
+struct Cacher<T>
+where
+    T: Fn(u32) -> u32,
+{
+    calculation: T,
+    value: Option<u32>,
+}
+
+impl<T> Cacher<T>
+where
+    T: Fn(u32) -> u32,
+{
+    fn new(calculation: T) -> Cacher<T> {
+        Cacher {
+            calculation,
+            value:None,
+        }
+    }
+
+    fn value(&mut self, arg: u32) -> u32 {
+        match self.value {
+            Some(v) => v,
+            None => {
+                let v = (self.calculation)(arg);
+                self.value = Some(v);
+                v
+            }
+        }
+    }
+}
 
 fn generate_workout(intensity: u32, random_number: u32) {
-    let expensive_calculation = |num: u32| {
+    let mut expensive_calculation = Cacher::new(|num: u32| -> u32 {
         println!("Calculating slowly...");
         thread::sleep(Duration::from_secs(2));
         num
-    };
+    });
     if intensity < 25 {
         println!(
             "Today, do {} pushups",
-            expensive_calculation(intensity)
+            expensive_calculation.value(intensity)
         );
         println!(
             "Next, do {} situps!",
-            expensive_calculation(intensity)
+            expensive_calculation.value(intensity)
         );
     } else {
         if random_number == 3 {
@@ -22,15 +53,16 @@ fn generate_workout(intensity: u32, random_number: u32) {
         } else {
             println!(
                 "Today, run for {} minutes!",
-                expensive_calculation(intensity)
+                expensive_calculation.value(intensity)
             );
         }
     }
 }
 
 fn main() {
-    println!("Hello, world!");
+    let now = Instant::now();
     let simulated_user_specified_value = 10;
     let simulated_random_number = 7;
     generate_workout(simulated_user_specified_value, simulated_random_number);
+    println!("{} ms passed since start of program.", now.elapsed().as_millis());
 }
