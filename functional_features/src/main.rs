@@ -65,4 +65,9 @@ fn main() {
     let simulated_random_number = 7;
     generate_workout(simulated_user_specified_value, simulated_random_number);
     println!("{} ms passed since start of program.", now.elapsed().as_millis());
+    let v1 = vec![1,2,3,4,5,6,7,8,9,10];
+    let v1_iter = v1.iter();
+    for val in v1_iter {
+        println!("Got: {}", val)
+    }
 }
