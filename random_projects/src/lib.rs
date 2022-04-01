@@ -3,8 +3,8 @@ mod tests{
     use super::*;
     #[test]
     fn test_factorial(){
-        assert_eq!(q1::factorial(5), 120);
-        assert_eq!(q1::factorial(7), 5040);
+        assert_eq!(q1::query::factorial(5), 120);
+        assert_eq!(q1::query::factorial(7), 5040);
     }
 }
 
