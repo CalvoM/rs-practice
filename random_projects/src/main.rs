@@ -1,7 +1,7 @@
-use practice::q1::query::factorial;
-use practice::commons::get_user_input_uint;
+use practice::q2::query::{Currency, currency_converter};
 fn main(){
-    let num = get_user_input_uint();
-    let res = factorial(num);
-    println!("Factorial of {} is {}", num, res)
+    let usa = Currency{name: String::from("USA"), value: 23.8};
+    let mut kenya = Currency{name: String::from("KES"), value: 0.0};
+    currency_converter(&usa, &mut kenya, 115.6);
+    println!("From {} {} to {}{}",usa.value, usa.name, kenya.value, kenya.name)
 }
