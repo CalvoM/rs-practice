@@ -3,18 +3,13 @@ mod tests{
     use super::*;
     #[test]
     fn test_factorial(){
-        assert_eq!(factorial(5), 120);
-        assert_eq!(factorial(7), 5040);
+        assert_eq!(q1::factorial(5), 120);
+        assert_eq!(q1::factorial(7), 5040);
     }
 }
 
-pub fn factorial(num: u32) -> u32 {
-    if num < 1 {
-        1
-    } else {
-        num * factorial(num -1)
-    }
-}
+pub mod q1;
+
 pub mod commons {
     use std::io;
 
