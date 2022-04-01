@@ -1,7 +1,6 @@
-use practice::q2::query::{Currency, currency_converter};
+use practice::q3::query::print_pattern;
+use practice::commons::get_user_input_uint;
 fn main(){
-    let usa = Currency{name: String::from("USA"), value: 23.8};
-    let mut kenya = Currency{name: String::from("KES"), value: 0.0};
-    currency_converter(&usa, &mut kenya, 115.6);
-    println!("From {} {} to {}{}",usa.value, usa.name, kenya.value, kenya.name)
+    let top = get_user_input_uint();
+    print_pattern(top);
 }
