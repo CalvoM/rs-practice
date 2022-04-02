@@ -1,6 +1,4 @@
-use practice::q5::query::print_pattern;
-use practice::commons::get_user_input_uint;
+use practice::q6::query::guessing_game;
 fn main(){
-    let top = get_user_input_uint();
-    print_pattern(top);
+    guessing_game();
 }
