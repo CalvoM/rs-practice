@@ -29,4 +29,9 @@ pub mod commons {
             res.unwrap()
         }
     }
+    pub fn get_user_input_str() -> String{
+        let mut buffer = String::new();
+        io::stdin().read_line(&mut buffer).expect("Failed to obtain the user input");
+        buffer
+    }
 }
