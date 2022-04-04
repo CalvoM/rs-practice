@@ -15,9 +15,11 @@ pub mod q4;
 pub mod q5;
 pub mod q7;
 pub mod q8;
+pub mod q9;
 
 pub mod commons {
     use std::io;
+    use std::io::Write;
 
     pub fn get_user_input_uint() -> u32{
         let mut buffer = String::new();
@@ -33,5 +35,8 @@ pub mod commons {
         let mut buffer = String::new();
         io::stdin().read_line(&mut buffer).expect("Failed to obtain the user input");
         buffer
+    }
+    pub fn stdout_fflush() {
+        io::stdout().flush().unwrap();
     }
 }

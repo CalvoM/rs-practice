@@ -1,9 +1,9 @@
-use practice::q8::query::print_fibonacci;
-use practice::commons::get_user_input_uint;
-use std::io::Write;
+use practice::q9::query::analyse_input_chars;
+use practice::commons::{get_user_input_str, stdout_fflush};
 fn main(){
-    print!("Provide limit for the fibonacci series: ");
-    std::io::stdout().flush().unwrap();
-    let limit = get_user_input_uint();
-    print_fibonacci(0,1,limit);
+    print!("Enter the string to analyze: ");
+    stdout_fflush();
+    let input: String = get_user_input_str().trim().to_string();
+    let c = analyse_input_chars(input);
+    println!("{}", c)
 }
