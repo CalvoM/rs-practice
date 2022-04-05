@@ -39,4 +39,35 @@ pub mod commons {
     pub fn stdout_fflush() {
         io::stdout().flush().unwrap();
     }
+
+    pub enum PrintColour {
+        INFO,
+        DEBUG,
+        WARNING,
+        ERROR,
+    }
+
+    pub fn print(content: String, level: PrintColour) {
+        let mut start = String::new();
+        let mut end = String::new();
+        match level{
+            PrintColour::INFO => {
+                start = String::from("\x1b[96m[INFO]");
+                end = String::from("\x1b[0m");
+            }
+            PrintColour::DEBUG => {
+                start = String::from("\x1b[94m[DEBUG]");
+                end = String::from("\x1b[0m");
+            }
+            PrintColour::WARNING => {
+                start = String::from("\x1b[93m[WARNING]");
+                end = String::from("\x1b[0m");
+            }
+            PrintColour::ERROR => {
+                start = String::from("\x1b[95m[ERROR]");
+                end = String::from("\x1b[0m");
+            }
+        }
+        println!("{} {} {}",start, content, end);
+    }
 }
