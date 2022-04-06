@@ -30,7 +30,7 @@ functions to show the user. (Beginner)
 - [x] Guessing game. Write a c++ game that asks the user to guess a number between 1 and a 100. If you guessed correctly, it will say you win. If your too high or too low it will also let you know. (Beginner)
 - [x] Create a program which generates Fibonacci series till a number 'n' where 'n' is entered by the user. For eg. if the user enters 10 then the output would be: 1 1 2 3 5 8 (Beginner)
 - [x] Determine how many of the characters are vowels and how many are consonants in a given line of text. Also terminate the string when the input character encountered is other than the alphabets. (Beginner).
-10. Find the Fifth root of the sum of the squares of the first 100 ODD numbers only. (Beginner)
+- [ ] Find the Fifth root of the sum of the squares of the first 100 ODD numbers only. (Beginner)
 11. Perform 4-letter WORD UNSCRAMBLING i.e. List all possible combinations of 4-letters in a word. Ex: The word 'TEST' can be unscrambled as TEST,TETS,TSET,TSTE,TTSE,TTES,etc. (Beginner)
 12. Make a program that allows the user to input either the radius, diameter, or area of the circle. The program should then calculate the other 2 based on the input. (Beginner)
 13. READ a line of text and WRITE it out BACKWARDS using RECURSIVE Function. (Beginner)
