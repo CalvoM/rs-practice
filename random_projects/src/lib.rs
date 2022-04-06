@@ -16,6 +16,7 @@ pub mod q5;
 pub mod q7;
 pub mod q8;
 pub mod q9;
+pub mod q11;
 
 pub mod commons {
     use std::io;
