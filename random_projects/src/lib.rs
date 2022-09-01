@@ -53,7 +53,7 @@ pub mod commons {
         let mut end = String::new();
         match level{
             PrintColour::INFO => {
-                start = String::from("\x1b[96m[INFO]");
+                start = String::from("\x1b[96m");
                 end = String::from("\x1b[0m");
             }
             PrintColour::DEBUG => {
