@@ -9,6 +9,10 @@ use rstest::rstest;
 #[case(4, 3)]
 #[case(5, 5)]
 #[case(6, 8)]
+#[case(7, 13)]
+#[case(8, 21)]
+#[case(9, 34)]
+#[case(10, 55)]
 fn fibonacci_fails(#[case] index: usize, #[case] expected: usize) {
     assert_eq!(fibonacci::solve(index), expected)
 }
