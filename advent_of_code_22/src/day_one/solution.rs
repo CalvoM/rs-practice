@@ -1,5 +1,6 @@
 use std::fs;
 
+#[warn(dead_code)]
 pub fn question_1() {
     let contents = fs::read_to_string("./src/day_one/input1.txt").expect("Reading not okay");
     let segments = contents.split("\n\n");
@@ -22,7 +23,6 @@ pub fn question_1() {
 pub fn question_2() {
     let contents = fs::read_to_string("./src/day_one/input1.txt").expect("Reading not okay");
     let segments = contents.split("\n\n");
-    let mut max_sum: u64 = 0;
     let mut max_list: Vec<u64> = vec![];
     for segment in segments {
         let numbers = segment.split("\n");
