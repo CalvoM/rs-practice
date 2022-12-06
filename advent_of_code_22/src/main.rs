@@ -6,5 +6,5 @@ mod day_six;
 mod day_three;
 mod day_two;
 fn main() {
-    day_six::solution::question_1();
+    day_five::solution::question_1();
 }

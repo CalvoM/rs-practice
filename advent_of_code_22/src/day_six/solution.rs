@@ -5,7 +5,7 @@ pub fn question_1() {
     let content = content.trim_end();
     let mut non_marker_index = 0;
     println!("{}", content);
-    for (i, c) in content.chars().enumerate() {
+    for (i, _) in content.chars().enumerate() {
         let max = i + 13;
         let mut index = i;
         let mut checker: HashMap<char, usize> = HashMap::new();
@@ -22,7 +22,7 @@ pub fn question_1() {
             }
             index += 1;
         }
-        if no_copies == true {
+        if no_copies {
             non_marker_index = i + 14;
             break;
         }

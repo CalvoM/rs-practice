@@ -17,7 +17,6 @@ pub fn question_1() {
     let mut stacks: Vec<&str> = vec![];
     let mut stack_indices: &str = "";
     let mut stack_layout: HashMap<char, Vec<char>> = HashMap::new();
-    let mut max_stack_index = 0;
     let re = Regex::new(r"move (?P<count>\d{1,2}) from (?P<src>\d+) to (?P<dest>\d+)").unwrap();
     while index <= line_count {
         match state {
@@ -34,15 +33,12 @@ pub fn question_1() {
             State::ReadingStackIndices => {
                 stack_indices = lines[index];
                 index += 1;
-                let lean = stack_indices.trim();
-                let max = lean.chars().nth(lean.len() - 1).unwrap_or('0');
-                max_stack_index = max.to_string().parse().unwrap();
                 state = State::ProcessStack;
             }
             State::ProcessStack => {
                 for (i, si) in stack_indices.chars().enumerate() {
                     if si != ' ' {
-                        let mut cur_stack = stack_layout.get_mut(&si);
+                        let cur_stack = stack_layout.get_mut(&si);
                         if cur_stack.is_none() {
                             let mut values_at_index: Vec<char> = vec![];
                             for stack_value in stacks.clone() {
@@ -61,9 +57,9 @@ pub fn question_1() {
             State::ReadingCmds => {
                 let cmd = lines[index];
                 let caps = re.captures(cmd).unwrap();
-                let count: usize = *(&caps["count"].parse().unwrap());
-                let src = caps["src"].chars().nth(0).unwrap();
-                let dest = caps["dest"].chars().nth(0).unwrap();
+                let count: usize = caps["count"].parse().unwrap();
+                let src = caps["src"].chars().next().unwrap();
+                let dest = caps["dest"].chars().next().unwrap();
                 let dest_stack = stack_layout.get(&dest).unwrap();
                 let mut dest_stack_clone = dest_stack.clone();
                 let src_stack = stack_layout.get(&src).unwrap();
