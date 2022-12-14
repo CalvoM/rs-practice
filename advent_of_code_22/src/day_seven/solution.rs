@@ -1,16 +1,17 @@
-use std::fs;
+use std::{collections::HashMap, fs};
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 struct File {
     pub name: String,
     pub size: usize,
 }
 
-#[derive(Debug)]
-struct Folder {
+#[derive(Debug, Clone)]
+struct Folder<'a> {
     pub name: String,
     pub files: Vec<File>,
-    pub folders: Vec<Folder>,
+    pub folders: Vec<Folder<'a>>,
+    pub parent: Option<&'a Box<Folder<'a>>>,
 }
 
 const CMD_STARTER: &str = "$";
@@ -31,24 +32,62 @@ pub fn question_1() {
     tree_traversal(lines, index);
 }
 
-fn tree_traversal(lines: Vec<&str>, mut index: usize) -> Folder {
-    let mut root_folder = Folder {
+fn tree_traversal(lines: Vec<&str>, mut index: usize) {
+    let mut root_folder = Box::new(Folder {
         name: String::new(),
         files: vec![],
         folders: vec![],
-    };
+        parent: None,
+    });
     index = 0;
-    create_tree(lines, &mut index);
-    println!("{}", index);
-    root_folder
+    let mut cmds = lines[index].split(' ').collect::<Vec<&str>>();
+    if cmds[0] == CMD_STARTER && cmds[1] == "cd" {
+        root_folder.name = cmds[2].to_owned();
+        index += 1;
+    }
+    cmds = lines[index].split(' ').collect::<Vec<&str>>();
+    if cmds[0] == CMD_STARTER && cmds[1] == "ls" {
+        index += 1;
+    }
+    cmds = lines[index].split(' ').collect::<Vec<&str>>();
+    while cmds[0] != CMD_STARTER {
+        //Check if dir
+        if cmds[0] == "dir" {
+            let folder_found = Folder {
+                name: cmds[1].to_owned(),
+                folders: vec![],
+                files: vec![],
+                parent: Some(&root_folder),
+            };
+            root_folder.folders.push(folder_found);
+        } else {
+            let size: usize = cmds[0].parse().unwrap();
+            let file = File {
+                name: cmds[1].to_owned(),
+                size,
+            };
+            root_folder.files.push(file)
+        }
+        index += 1;
+        cmds = lines[index].split(' ').collect::<Vec<&str>>();
+    }
+    create_tree(lines, &mut index, &mut root_folder);
+
+    println!("{:?}", root_folder.folders);
 }
 
-fn create_tree(lines: Vec<&str>, index: &mut usize) -> Option<Folder> {
-    let mut folder = Folder {
+fn create_tree<'a>(
+    lines: Vec<&'a str>,
+    index: &'a mut usize,
+    parent_folder: &'a mut Folder<'a>,
+) -> Option<Box<Folder<'a>>> {
+    println!("\tParent {:?}\n", parent_folder);
+    let mut folder = Box::new(Folder {
         name: String::new(),
         files: vec![],
         folders: vec![],
-    };
+        parent: None,
+    });
     let mut cmds = lines[*index].split(' ').collect::<Vec<&str>>();
     // if moving to parent directory
     if cmds[0] == CMD_STARTER && cmds[cmds.len() - 1] == BACK_DIR {
@@ -56,11 +95,10 @@ fn create_tree(lines: Vec<&str>, index: &mut usize) -> Option<Folder> {
     }
     if cmds[0] == CMD_STARTER && cmds[1] == "cd" {
         folder.name = cmds[2].to_owned();
+        println!("-->{}\n", folder.name);
         *index += 1;
     }
     cmds = lines[*index].split(' ').collect::<Vec<&str>>();
-    //TODO: We might need logic for ls cmd
-    // Reading files and folders
     if cmds[0] == CMD_STARTER && cmds[1] == "ls" {
         *index += 1;
     }
@@ -72,19 +110,43 @@ fn create_tree(lines: Vec<&str>, index: &mut usize) -> Option<Folder> {
                 name: cmds[1].to_owned(),
                 folders: vec![],
                 files: vec![],
+                parent: Some(&folder),
             };
+            println!("\tDir {:?}", folder_found);
             folder.folders.push(folder_found);
         } else {
             let size: usize = cmds[0].parse().unwrap();
             let file = File {
                 name: cmds[1].to_owned(),
-                size: size,
+                size,
             };
+            println!("\tFile {:?}", file);
             folder.files.push(file)
         }
         *index += 1;
         cmds = lines[*index].split(' ').collect::<Vec<&str>>();
     }
-    println!("{:?}", folder);
+    let mut folder_index = 1_001;
+    for (i, f) in parent_folder.folders.iter_mut().enumerate() {
+        if f.name == folder.name {
+            folder_index = i;
+        }
+    }
+    if folder_index != 1_001 {
+        parent_folder.folders[folder_index] = *folder.clone();
+    }
+
+    let ret = create_tree(lines.clone(), index, &mut folder).is_none();
+    if ret {
+        println!("Going back from child: {:?}", folder);
+        create_tree(lines.clone(), index, parent_folder);
+        let mut cmds = lines[*index].split(' ').collect::<Vec<&str>>();
+        // if moving to parent directory
+        if cmds[0] == CMD_STARTER && cmds[cmds.len() - 1] == BACK_DIR {
+            return None;
+        } else {
+            create_tree(lines.clone(), index, parent_folder);
+        }
+    }
     Some(folder)
 }
