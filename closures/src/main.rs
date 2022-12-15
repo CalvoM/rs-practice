@@ -1,4 +1,4 @@
-use std::{rc::Rc, thread, time::Duration};
+use std::{thread, time::Duration};
 
 type CallableOnceString = Option<Box<dyn Fn(String)>>;
 struct Alert<'a> {
