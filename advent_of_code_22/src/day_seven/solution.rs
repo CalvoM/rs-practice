@@ -1,152 +1,54 @@
-use std::{collections::HashMap, fs};
+use std::{cell::RefCell, fs, rc::Rc};
+
+const CMD_CD_STARTER: &str = "$ cd";
+const CMD_LS_STARTER: &str = "$ ls";
+const BACK_DIR: &str = "..";
+const ROOT_DIR: &str = "/";
 
 #[derive(Debug, Clone)]
 struct File {
     pub name: String,
     pub size: usize,
 }
-
-#[derive(Debug, Clone)]
-struct Folder<'a> {
+#[derive(Default, Debug, Clone)]
+struct Folder {
     pub name: String,
     pub files: Vec<File>,
-    pub folders: Vec<Folder<'a>>,
-    pub parent: Option<&'a Box<Folder<'a>>>,
+    pub folders: Vec<Folder>,
+    pub size: usize,
 }
 
-const CMD_STARTER: &str = "$";
-const BACK_DIR: &str = "..";
-const ROOT_DIR: &str = "/";
-
-// Logic
-// When we encounter cd command, we start a folder with name
-// We read the next line
-// If it is cd again, create the folder as child of earlier folder
-// If it is ls, then get the next lines and save as contents of parent folder
-// We read the following lines with the files in the folder
+pub type FolderRef = Rc<RefCell<Folder>>;
+impl Folder {
+    fn new(name: String) -> Self {
+        Folder {
+            name,
+            files: Vec::new(),
+            folders: Vec::new(),
+            size: 0,
+        }
+    }
+}
 pub fn question_1() {
     let content = fs::read_to_string("./src/day_seven/testinput.txt").unwrap();
     let content = content.trim_end();
-    let lines: Vec<&str> = content.split('\n').collect();
-    let index = 0;
-    tree_traversal(lines, index);
+    let lines = content.split('\n').collect::<Vec<&str>>();
+    println!("{:#?}", lines);
+    tree_traversal(lines);
 }
 
-fn tree_traversal(lines: Vec<&str>, mut index: usize) {
-    let mut root_folder = Box::new(Folder {
-        name: String::new(),
-        files: vec![],
-        folders: vec![],
-        parent: None,
-    });
-    index = 0;
-    let mut cmds = lines[index].split(' ').collect::<Vec<&str>>();
-    if cmds[0] == CMD_STARTER && cmds[1] == "cd" {
-        root_folder.name = cmds[2].to_owned();
-        index += 1;
-    }
-    cmds = lines[index].split(' ').collect::<Vec<&str>>();
-    if cmds[0] == CMD_STARTER && cmds[1] == "ls" {
-        index += 1;
-    }
-    cmds = lines[index].split(' ').collect::<Vec<&str>>();
-    while cmds[0] != CMD_STARTER {
-        //Check if dir
-        if cmds[0] == "dir" {
-            let folder_found = Folder {
-                name: cmds[1].to_owned(),
-                folders: vec![],
-                files: vec![],
-                parent: Some(&root_folder),
-            };
-            root_folder.folders.push(folder_found);
-        } else {
-            let size: usize = cmds[0].parse().unwrap();
-            let file = File {
-                name: cmds[1].to_owned(),
-                size,
-            };
-            root_folder.files.push(file)
+fn tree_traversal(lines: Vec<&str>) {
+    let mut opened_folders: Vec<FolderRef> = Vec::new();
+    for line in lines {
+        if !opened_folders.is_empty() {
+            let current_dir = opened_folders.last_mut().unwrap();
         }
-        index += 1;
-        cmds = lines[index].split(' ').collect::<Vec<&str>>();
-    }
-    create_tree(lines, &mut index, &mut root_folder);
-
-    println!("{:?}", root_folder.folders);
-}
-
-fn create_tree<'a>(
-    lines: Vec<&'a str>,
-    index: &'a mut usize,
-    parent_folder: &'a mut Folder<'a>,
-) -> Option<Box<Folder<'a>>> {
-    println!("\tParent {:?}\n", parent_folder);
-    let mut folder = Box::new(Folder {
-        name: String::new(),
-        files: vec![],
-        folders: vec![],
-        parent: None,
-    });
-    let mut cmds = lines[*index].split(' ').collect::<Vec<&str>>();
-    // if moving to parent directory
-    if cmds[0] == CMD_STARTER && cmds[cmds.len() - 1] == BACK_DIR {
-        return None;
-    }
-    if cmds[0] == CMD_STARTER && cmds[1] == "cd" {
-        folder.name = cmds[2].to_owned();
-        println!("-->{}\n", folder.name);
-        *index += 1;
-    }
-    cmds = lines[*index].split(' ').collect::<Vec<&str>>();
-    if cmds[0] == CMD_STARTER && cmds[1] == "ls" {
-        *index += 1;
-    }
-    cmds = lines[*index].split(' ').collect::<Vec<&str>>();
-    while cmds[0] != CMD_STARTER {
-        //Check if dir
-        if cmds[0] == "dir" {
-            let folder_found = Folder {
-                name: cmds[1].to_owned(),
-                folders: vec![],
-                files: vec![],
-                parent: Some(&folder),
-            };
-            println!("\tDir {:?}", folder_found);
-            folder.folders.push(folder_found);
-        } else {
-            let size: usize = cmds[0].parse().unwrap();
-            let file = File {
-                name: cmds[1].to_owned(),
-                size,
-            };
-            println!("\tFile {:?}", file);
-            folder.files.push(file)
-        }
-        *index += 1;
-        cmds = lines[*index].split(' ').collect::<Vec<&str>>();
-    }
-    let mut folder_index = 1_001;
-    for (i, f) in parent_folder.folders.iter_mut().enumerate() {
-        if f.name == folder.name {
-            folder_index = i;
+        if line.starts_with(CMD_CD_STARTER) {
+            let name = line.split(' ').collect::<Vec<&str>>()[2];
+            let folder = Rc::new(RefCell::new(Folder::new(name.to_owned())));
+            opened_folders.push(folder);
+        } else if line.starts_with(CMD_LS_STARTER) {
+            line;
         }
     }
-    if folder_index != 1_001 {
-        parent_folder.folders[folder_index] = *folder.clone();
-    }
-
-    let ret = create_tree(lines.clone(), index, &mut folder).is_none();
-    if ret {
-        println!("Going back from child: {:?}", folder);
-        create_tree(lines.clone(), index, parent_folder);
-        let mut cmds = lines[*index].split(' ').collect::<Vec<&str>>();
-        // if moving to parent directory
-        if cmds[0] == CMD_STARTER && cmds[cmds.len() - 1] == BACK_DIR {
-            return None;
-        } else {
-            create_tree(lines.clone(), index, parent_folder);
-        }
-    }
-    Some(folder)
 }
