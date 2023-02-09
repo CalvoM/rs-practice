@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 // Memory inefficient linked list due to tail node being junk and still allocated
 // pub enum List {
 //     Empty,
@@ -25,3 +26,18 @@
 //     More(Box<Node>),
 // }
 // /////////////////////////////////////////
+
+// List -> Link -> Node
+pub struct List {
+    head: Link,
+}
+
+enum Link {
+    Empty,
+    More(Box<Node>),
+}
+
+struct Node {
+    elem: i32,
+    next: Link,
+}
