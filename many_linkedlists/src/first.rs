@@ -4,6 +4,10 @@
 //     Empty,
 //     Elem(i32, Box<List>),
 // }
+// [] = Stack
+// () = Heap
+//
+// [Elem A, ptr] -> (Elem B, ptr) -> (Empty, *junk*)
 
 // Even though Empty is not called
 // Does not have null pointer optimization like above approach
@@ -55,10 +59,12 @@ impl List {
         self.head = Link::More(new_node)
     }
     pub fn pop(&mut self) -> Option<i32> {
-        match &self.head {
-            Link::Empty => {}
-            Link::More(node) => {}
-        };
-        unimplemented!()
+        match std::mem::replace(&mut self.head, Link::Empty) {
+            Link::Empty => None,
+            Link::More(node) => {
+                self.head = node.next;
+                Some(node.elem)
+            }
+        }
     }
 }
