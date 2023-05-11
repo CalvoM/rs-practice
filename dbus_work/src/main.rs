@@ -1,16 +1,18 @@
 mod services;
 use anyhow::Result;
 use std::collections::HashMap;
-use std::error::Error;
 
-use zbus::{dbus_proxy, zvariant::Value, Connection};
+use zbus::Connection;
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    let connection = Connection::session().await?;
-    notifications(&connection).await?;
-    let connection = Connection::system().await?;
-    accounts(&connection).await?;
+    let session_connection = Connection::session().await?;
+    let system_connection = Connection::system().await?;
+    notifications(&session_connection).await?;
+    accounts(&system_connection).await?;
+    // kbdlight(&system_connection).await?;
+    systemd_unit_paths(&system_connection).await?;
+    network_manager_service(&system_connection).await?;
     Ok(())
 }
 
@@ -34,9 +36,42 @@ async fn notifications(connection: &Connection) -> Result<u32> {
 
 async fn accounts(connection: &Connection) -> Result<()> {
     let proxy = services::AccountsProxy::new(connection).await?;
-    let reply = proxy.listCachedUsers().await?;
-    for (i, account) in reply.iter().enumerate() {
+    let reply = proxy.list_cached_users().await?;
+    for (_, account) in reply.iter().enumerate() {
         println!("{:?}", account);
     }
+    Ok(())
+}
+
+#[warn(dead_code)]
+async fn kbdlight(connection: &Connection) -> Result<()> {
+    let proxy = services::KeyBoardBackLightProxy::new(connection).await?;
+    let reply = proxy.get_brightness().await?;
+    dbg!(reply);
+    let reply = proxy.get_max_brightness().await?;
+    dbg!(reply);
+    let mut i = 0;
+    while i < 50 {
+        let value = i % (reply + 1);
+        proxy.set_brightness(value).await?;
+        i += 1;
+        std::thread::sleep(std::time::Duration::from_millis(5));
+    }
+    Ok(())
+}
+
+async fn systemd_unit_paths(connection: &Connection) -> Result<()> {
+    let proxy = services::SystemdManagerProxy::new(connection).await?;
+    let reply = proxy.unit_path().await?;
+    dbg!(reply);
+    let reply = proxy.environment().await?;
+    dbg!(reply);
+    Ok(())
+}
+
+async fn network_manager_service(connection: &Connection) -> Result<()> {
+    let proxy = services::NetworkManagerProxy::new(connection).await?;
+    let reply = proxy.active_connections().await?;
+    dbg!(reply);
     Ok(())
 }
