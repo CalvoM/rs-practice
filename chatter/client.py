@@ -9,14 +9,13 @@ def client_program():
 
     data = ""
 
-    while True:
-        message = input(" -> ")  # take input
-        message = message + "\r\n"
-        client_socket.sendall(message.encode())
-        data = client_socket.recv(1024).decode()  # receive response
+    while data := client_socket.recv(1024).decode():
         if data.lower().split() == "!bye":
             break
-        print("Received from server: " + data)  # show in terminal
+        print("Others: " + data)  # show in terminal
+        message = input(": ")  # take input
+        message = message + "\r\n"
+        client_socket.sendall(message.encode())
 
     client_socket.close()  # close the connection
 
