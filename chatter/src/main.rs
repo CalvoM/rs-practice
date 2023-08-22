@@ -8,7 +8,7 @@ use chatter::CommsState;
 use chatter::DataStreamer;
 fn main() -> io::Result<()> {
     let users: Arc<Mutex<HashMap<String, TcpStream>>> = Arc::new(Mutex::new(HashMap::new()));
-    let loopback = Ipv4Addr::new(127, 0, 0, 1);
+    let loopback = Ipv4Addr::new(0, 0, 0, 0);
     let socket = SocketAddrV4::new(loopback, 8089);
     let listener = TcpListener::bind(socket).unwrap();
     let _port = listener.local_addr().unwrap();

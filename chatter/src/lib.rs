@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use std::io::{self, BufRead, Write};
 use std::net::TcpStream;
-use std::sync::{Arc, Mutex, MutexGuard};
+use std::sync::MutexGuard;
 
 pub struct DataStreamer {
     reader: io::BufReader<TcpStream>,
@@ -71,6 +71,12 @@ pub enum CommsState {
     RepeatGetUserName,
     ActiveChatting,
     Done,
+}
+
+impl Default for CommsState {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl CommsState {
