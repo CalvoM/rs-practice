@@ -96,3 +96,71 @@ impl CommsState {
         Self::RepeatGetUserName
     }
 }
+
+pub struct MessageDetails {
+    name: String,
+    message: String,
+}
+pub struct AppComms {
+    username: String,
+    current_input: String,
+    current_cursor_position: usize,
+    messages: Vec<MessageDetails>,
+}
+
+impl Default for AppComms {
+    fn default() -> Self {
+        AppComms {
+            username: String::new(),
+            current_input: String::new(),
+            current_cursor_position: 0,
+            messages: Vec::new(),
+        }
+    }
+}
+
+impl AppComms {
+    fn move_cursor_right(&mut self) {
+        let cursor_moved_right = self.current_cursor_position.saturating_add(1);
+        self.current_cursor_position = self.limit_curso_to_strin_length(cursor_moved_right);
+    }
+    pub fn move_cursor_left(&mut self) {
+        let cursor_moved_left = self.current_cursor_position.saturating_sub(1);
+        self.current_cursor_position = self.limit_curso_to_strin_length(cursor_moved_left);
+    }
+    pub fn enter_char(&mut self, new_char: char) {
+        self.current_input
+            .insert(self.current_cursor_position, new_char);
+
+        self.move_cursor_right();
+    }
+    fn limit_curso_to_strin_length(&self, new_cursor_pos: usize) -> usize {
+        new_cursor_pos.clamp(0, self.current_input.len())
+    }
+    pub fn delete_char(&mut self) {
+        let is_not_cursor_leftmost = self.current_cursor_position != 0;
+        if is_not_cursor_leftmost {
+            let current_index = self.current_cursor_position;
+            let from_left_to_current_index = current_index - 1;
+
+            let before_char_to_delete = self.current_input.chars().take(from_left_to_current_index);
+            let after_char_to_delete = self.current_input.chars().skip(current_index);
+
+            self.current_input = before_char_to_delete.chain(after_char_to_delete).collect();
+            self.move_cursor_left();
+        }
+    }
+    fn reset_cursor(&mut self) {
+        self.current_cursor_position = 0;
+    }
+
+    pub fn submit_message(&mut self) {
+        let message = MessageDetails {
+            name: self.username.clone(),
+            message: self.current_input.clone(),
+        };
+        self.messages.push(message);
+        self.current_input.clear();
+        self.reset_cursor();
+    }
+}
